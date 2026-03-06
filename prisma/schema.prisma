@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  username  String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  boards    Board[]
+  comments  Comment[]
+
+  @@map("users")
+  @@index([email])
+  @@index([username])
+}
+
+model Board {
+  id        String     @id @default(cuid())
+  name      String     @db.VarChar(255)
+  description String?  @db.Text
+  userId    String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  columns   Column[]
+
+  @@map("boards")
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Column {
+  id        String     @id @default(cuid())
+  name      String     @db.VarChar(255)
+  position  Int
+  boardId   String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  board     Board      @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  cards     Card[]
+
+  @@map("columns")
+  @@index([boardId])
+  @@unique([boardId, position])
+}
+
+model Card {
+  id          String     @id @default(cuid())
+  title       String     @db.VarChar(255)
+  description String?    @db.Text
+  position    Int
+  columnId    String
+  dueDate     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  column      Column       @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  tags        Tag[]
+  comments    Comment[]
+
+  @@map("cards")
+  @@index([columnId])
+  @@index([dueDate])
+  @@unique([columnId, position])
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String     @db.VarChar(100)
+  color     String     @db.VarChar(7) @default("#3b82f6")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  cards     Card[]
+
+  @@map("tags")
+  @@unique([name])
+  @@index([name])
+}
+
+model Comment {
+  id        String     @id @default(cuid())
+  content   String     @db.Text
+  cardId    String
+  userId    String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  card      Card       @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+  @@index([cardId])
+  @@index([userId])
+  @@index([createdAt])
+}
