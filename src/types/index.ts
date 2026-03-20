@@ -14,7 +14,7 @@ export type UserResponse = Omit<IUser, 'password'>;
 export interface IBoard {
   id: string;
   name: string;
-  description?: string;
+  description?: string | null ;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -34,10 +34,10 @@ export interface IColumn {
 export interface ICard {
   id: string;
   title: string;
-  description?: string;
+  description?: string | null ;
   position: number;
   columnId: string;
-  dueDate?: Date;
+  dueDate?: Date | null ;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -52,13 +52,15 @@ export interface ITag {
 }
 
 // Comment Types
-export interface IComment {
+export interface Comment {
   id: string;
   content: string;
   cardId: string;
   userId: string;
+  parentId?: string | null;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt?: Date | null;
 }
 
 // Auth Types

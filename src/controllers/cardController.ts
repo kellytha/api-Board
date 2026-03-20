@@ -40,7 +40,9 @@ export class CardController {
     }
 
     const { columnId } = req.params;
-    const cards = await CardService.getColumnCards(columnId, req.user.userId);
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 50;
+    const cards = await CardService.getColumnCards(columnId, req.user.userId, { page, limit });
 
     sendSuccess(res, 200, cards, 'Cards retrieved successfully');
   });

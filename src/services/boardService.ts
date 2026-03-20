@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { IBoard } from '../types/index.js';
 import { NotFoundError, ForbiddenError } from '../utils/errors.js';
-
-const prisma = new PrismaClient();
+import { prisma } from '../db/prisma.js';
 
 export class BoardService {
   /**
@@ -27,23 +25,27 @@ export class BoardService {
   /**
    * Get all boards for a user
    */
-  static async getUserBoards(userId: string): Promise<IBoard[]> {
-    const boards = await prisma.board.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        columns: {
-          orderBy: { position: 'asc' },
-          include: {
-            cards: {
-              orderBy: { position: 'asc' },
-            },
-          },
-        },
-      },
-    });
+  static async getUserBoards(
+    userId: string,
+    opts?: { page?: number; limit?: number }
+  ): Promise<{ items: IBoard[]; page: number; limit: number; total: number; pages: number }> {
+    const page = Math.max(1, opts?.page ?? 1);
+    const limit = Math.min(50, Math.max(1, opts?.limit ?? 10));
+    const skip = (page - 1) * limit;
 
-    return boards;
+    const [total, items] = await prisma.$transaction([
+      prisma.board.count({ where: { userId } }),
+      prisma.board.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        // List endpoint should not eagerly load the full board graph.
+        // Use GET /boards/:boardId for the deep include.
+      }),
+    ]);
+
+    return { items, page, limit, total, pages: Math.ceil(total / limit) };
   }
 
   /**

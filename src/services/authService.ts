@@ -1,10 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import { PasswordService } from '../utils/password.js';
 import { TokenService } from '../utils/token.js';
 import { IAuthResponse, UserResponse } from '../types/index.js';
 import { ConflictError, UnauthorizedError } from '../utils/errors.js';
-
-const prisma = new PrismaClient();
+import { prisma } from '../db/prisma.js';
 
 export class AuthService {
   /**

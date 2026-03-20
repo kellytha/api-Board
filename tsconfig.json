@@ -25,7 +25,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "bundler",
-    "types":["node"]
+    "types":["jest","node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

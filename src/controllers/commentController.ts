@@ -15,11 +15,12 @@ export class CommentController {
       return;
     }
 
-    const { cardId, content } = req.body;
+    const { cardId, content, parentId } = req.body;
     const comment = await CommentService.createComment(
       cardId,
       req.user.userId,
-      content
+      content,
+      parentId
     );
 
     sendSuccess(res, 201, comment, 'Comment created successfully');

@@ -1,7 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-
+import {Server} from "socket.io";
+import http from "http"
 // Load environment variables
 dotenv.config();
 
@@ -12,6 +13,8 @@ import columnRoutes from './routes/columnRoutes.js';
 import cardRoutes from './routes/cardRoutes.js';
 import tagRoutes from './routes/tagRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
+import { setupWebsocket } from "./ws/websocket";
+import { logger } from './utils/logger.js';
 
 // Import middleware
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -19,15 +22,19 @@ import { errorHandler } from './middlewares/errorHandler.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 const API_VERSION = process.env.API_VERSION || 'v1';
+const server = http.createServer(app);
+setupWebsocket(server);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+
 // Request logging middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(`${req.method} ${req.path}`);
+  logger.info(`${req.method} ${req.path}`);
   next();
 });
 
@@ -63,9 +70,9 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📚 API Base URL: http://localhost:${PORT}/api/${API_VERSION}`);
-  console.log(`🏥 Health Check: http://localhost:${PORT}/health\n`);
+  logger.info(`Server running on http://localhost:${PORT}`);
+  logger.info(`API Base URL: http://localhost:${PORT}/api/${API_VERSION}`);
+  logger.info(`Health Check: http://localhost:${PORT}/health`);
 });
 
 export default app;

@@ -33,7 +33,7 @@ async function main() {
     },
   });
 
-  console.log('✅ Users created:', user1.email, user2.email);
+  console.log('Users created:', user1.email, user2.email);
 
   // Create boards
   const board1 = await prisma.board.create({
@@ -52,7 +52,7 @@ async function main() {
     },
   });
 
-  console.log('✅ Boards created:', board1.name, board2.name);
+  console.log('Boards created:', board1.name, board2.name);
 
   // Create columns
   const column1 = await prisma.column.create({
@@ -79,7 +79,7 @@ async function main() {
     },
   });
 
-  console.log('✅ Columns created');
+  console.log('Columns created');
 
   // Create tags
   const tagUrgent = await prisma.tag.create({
@@ -103,7 +103,7 @@ async function main() {
     },
   });
 
-  console.log('✅ Tags created');
+  console.log('Tags created');
 
   // Create cards
   const card1 = await prisma.card.create({
@@ -142,7 +142,7 @@ async function main() {
     },
   });
 
-  console.log('✅ Cards created');
+  console.log('Cards created');
 
   // Create comments
   const comment1 = await prisma.comment.create({
@@ -161,7 +161,7 @@ async function main() {
     },
   });
 
-  console.log('✅ Comments created');
+  console.log('Comments created');
 
   console.log('\n🎉 Database seed completed successfully!');
 }

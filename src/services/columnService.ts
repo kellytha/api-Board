@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
 import { IColumn } from '../types/index.js';
 import { NotFoundError, ForbiddenError } from '../utils/errors.js';
 import { BoardService } from './boardService.js';
-
-const prisma = new PrismaClient();
+import { prisma } from '../db/prisma.js';
 
 export class ColumnService {
   /**

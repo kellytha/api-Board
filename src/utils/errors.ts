@@ -42,6 +42,12 @@ export class ConflictError extends AppError {
   }
 }
 
+export class PreconditionFailedError extends AppError {
+  constructor(message: string = 'Precondition failed') {
+    super(412, message);
+  }
+}
+
 /**
  * Send a successful API response
  */

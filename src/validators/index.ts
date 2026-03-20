@@ -41,6 +41,22 @@ export const createCardSchema = z.object({
 });
 
 export const updateCardSchema = createCardSchema.partial();
+export const updateCardWithConflictSchema = updateCardSchema.extend({
+  expectedUpdatedAt: z.string().datetime('expectedUpdatedAt must be an ISO datetime'),
+});
+
+export const moveCardSchema = z.object({
+  columnId: z.string().min(1, 'Target column ID is required'),
+  position: z.number().int('Position must be an integer').min(0, 'Position must be non-negative'),
+});
+
+export const reorderCardsSchema = z.object({
+  cards: z.array(
+    z.object({
+      id: z.string().min(1, 'Card ID is required'),
+    })
+  ).min(1, 'Cards array must not be empty'),
+});
 
 // Tag Validation Schemas
 export const createTagSchema = z.object({
@@ -57,6 +73,12 @@ export const assignTagSchema = z.object({
 
 // Comment Validation Schemas
 export const createCommentSchema = z.object({
+  cardId: z.string().min(1, 'Card ID is required'),
+  content: z.string().min(1, 'Comment content is required').max(5000, 'Comment must not exceed 5000 characters'),
+  parentId: z.string().min(1).optional().nullable(),
+});
+
+export const updateCommentSchema = z.object({
   content: z.string().min(1, 'Comment content is required').max(5000, 'Comment must not exceed 5000 characters'),
 });
 

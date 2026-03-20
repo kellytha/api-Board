@@ -353,11 +353,15 @@ GET    /api/v1/auth/me                Get current user info
 
 ```
 POST   /api/v1/boards                 Create board
-GET    /api/v1/boards                 Get all user boards
+GET    /api/v1/boards                 Get user boards (paginated)
 GET    /api/v1/boards/:boardId        Get single board with all columns & cards
 PATCH  /api/v1/boards/:boardId        Update board
 DELETE /api/v1/boards/:boardId        Delete board
 ```
+
+**Pagination**:
+- `GET /api/v1/boards?page=1&limit=10`
+- Response shape: `{ items, page, limit, total, pages }`
 
 ### Columns
 
@@ -375,7 +379,7 @@ PATCH  /api/v1/boards/:boardId/columns/reorder  Reorder columns
 ```
 POST   /api/v1/cards                  Create card
 GET    /api/v1/cards/:cardId          Get card details
-GET    /api/v1/columns/:columnId/cards Get all cards in column
+GET    /api/v1/cards/column/:columnId Get cards in column (paginated)
 PATCH  /api/v1/cards/:cardId          Update card
 DELETE /api/v1/cards/:cardId          Delete card
 POST   /api/v1/cards/:cardId/tags/:tagId     Assign tag to card
@@ -383,6 +387,16 @@ DELETE /api/v1/cards/:cardId/tags/:tagId    Remove tag from card
 POST   /api/v1/cards/:cardId/move     Move card to another column
 PATCH  /api/v1/columns/:columnId/cards/reorder  Reorder cards
 ```
+
+**Optimistic updates (conflict detection)**:
+- `PATCH /api/v1/cards/:cardId` requires `expectedUpdatedAt` (ISO string) to support optimistic UI updates.
+- If the card has been modified since `expectedUpdatedAt`, the API returns **412**.
+
+**Realtime events (Socket.IO)**:
+Connected clients receive:
+- `card:created`
+- `card:moved`
+- `comment:added`
 
 ### Tags
 

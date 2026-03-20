@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { CardController } from '../controllers/cardController.js';
 import { validateRequest } from '../middlewares/validation.js';
-import { createCardSchema, updateCardSchema } from '../validators/index.js';
+import { createCardSchema, updateCardWithConflictSchema, moveCardSchema, reorderCardsSchema } from '../validators/index.js';
 import { authenticate } from '../middlewares/errorHandler.js';
 
 const router = Router();
@@ -44,7 +44,7 @@ router.get(
 router.patch(
   '/:cardId',
   authenticate,
-  validateRequest(updateCardSchema),
+  validateRequest(updateCardWithConflictSchema),
   CardController.update
 );
 
@@ -85,6 +85,7 @@ router.delete(
 router.patch(
   '/column/:columnId/reorder',
   authenticate,
+  validateRequest(reorderCardsSchema),
   CardController.reorder
 );
 
@@ -95,7 +96,7 @@ router.patch(
 router.post(
   '/:cardId/move',
   authenticate,
-  validateRequest(createCardSchema),
+  validateRequest(moveCardSchema),
   CardController.move
 );
 

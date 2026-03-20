@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { CommentController } from '../controllers/commentController.js';
 import { validateRequest } from '../middlewares/validation.js';
-import { createCommentSchema } from '../validators/index.js';
+import { createCommentSchema, updateCommentSchema } from '../validators/index.js';
 import { authenticate } from '../middlewares/errorHandler.js';
 
 const router = Router();
@@ -44,7 +44,7 @@ router.get(
 router.patch(
   '/:commentId',
   authenticate,
-  validateRequest(createCommentSchema),
+  validateRequest(updateCommentSchema),
   CommentController.update
 );
 

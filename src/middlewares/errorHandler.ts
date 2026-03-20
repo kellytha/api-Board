@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { AppError, sendError, UnauthorizedError } from '../utils/errors.js';
 import { TokenService } from '../utils/token.js';
 import { IJWTPayload } from '../types/index.js';
+import { logger } from '../utils/logger.js';
 
 declare global {
   namespace Express {
@@ -21,7 +22,7 @@ export function errorHandler(
   res: Response,
   next: NextFunction
 ): void {
-  console.error('Error:', err);
+  logger.error('Error:', err);
 
   if (err instanceof AppError) {
     sendError(res, err.statusCode, err.message);

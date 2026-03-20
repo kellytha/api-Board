@@ -32,7 +32,9 @@ export class BoardController {
       return;
     }
 
-    const boards = await BoardService.getUserBoards(req.user.userId);
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+    const boards = await BoardService.getUserBoards(req.user.userId, { page, limit });
     sendSuccess(res, 200, boards, 'Boards retrieved successfully');
   });
 
